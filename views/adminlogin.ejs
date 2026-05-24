@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>User Login</title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+</head>
+<body>
+
+<div class="container">
+    <h1 class="text-primary text-center mt-5">Admin-Login</h1>
+    <form id="myform">
+        <div class="row  justify-content-center">
+            <div class="col-md-5 mt-3">
+                <label for="adhaar" class="form-label">Adhaar:</label>
+                <input type="text" class="form-control" id="adhaar" name="adhaar" placeholder="Enter your Adhaar no." required>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-5 mt-3">
+                <label for="password" class="form-label">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-md-5 mt-3">
+                <button type="button" class="btn btn-primary" onclick="submitLogin()">Login</button>
+            </div>
+        </div>
+    </form>
+    <span id="response"></span>
+</div>
+
+<script>
+    async function submitLogin() {
+        let adhaar = document.getElementById('adhaar').value;
+        let password = document.getElementById('password').value;
+        let options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                adhaar: adhaar,
+                password: password
+            })
+        };
+        let url = '/adminCheck';
+
+        try {
+            let response = await fetch(url, options);
+            let data = await response.json(); // Ab backend JSON bhej raha hai, toh yeh line makhkhan chalegi
+
+            document.getElementById('response').innerHTML = data.message;
+
+            if(data.error){
+                document.getElementById('response').style.color = 'red';
+            } else {
+                document.getElementById('response').style.color = 'green';
+                document.getElementById('myform').reset();
+
+                window.location.href = '/admin-home';
+            }
+        } catch (err) {
+            console.error("Error during login:", err);
+            document.getElementById('response').innerHTML = err.message;
+            document.getElementById('response').style.color = 'red';
+        }
+    }
+</script>
+
+</body>
+</html>

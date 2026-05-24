@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <title>Signup</title>
+</head>
+<body>
+
+<div class="container vh-100">
+    <h1 style="text-align: center" class="m-4">User Signup Form</h1>
+    <form id="myform" action="">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <label for="adhaar">Adhaar: </label>
+                <input type="text" id="adhaar" name="adhaar" class="form-control" placeholder="Enter your Adhaar" required>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <label for="password">Password: </label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+
+            <div class="col-md-12 mb-3">
+                <button type="button" class="btn btn-primary" onclick="onSubmit()">Signup</button>
+            </div>
+        </div>
+    </form>
+
+    <h4 id="response"></h4>
+
+</div>
+
+
+
+<script>
+async function onSubmit(){
+let adhaar = document.getElementById('adhaar').value;
+let password = document.getElementById('password').value;
+
+if(adhaar.length == 12){
+    let url = '/create-user';
+    let options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            adhaar: adhaar,
+            password: password,
+        })
+    };
+
+    let response = await fetch(url, options);
+    let data = await response.json();
+
+    document.getElementById('response').innerHTML = data.message;
+    if(data.error){
+        document.getElementById('response').style.color='red';
+    }
+    else{
+        document.getElementById('response').style.color='green';
+        if(data.redirect) {
+            // 1-2 second ka pause de sakte hain taaki user "Success" message dekh sake
+            setTimeout(() => {
+                window.location.href = data.redirect; // Yeh user ko /login par le jayega
+            }, 1500);
+        }
+    }
+
+    document.getElementById('myform').reset();
+}
+else{
+    document.getElementById('response').innerHTML = 'Invalid Adhaar Number!';
+    document.getElementById('response').style.color='red';
+    document.getElementById('myform').reset();
+}
+}
+</script>
+
+</body>
+</html>
